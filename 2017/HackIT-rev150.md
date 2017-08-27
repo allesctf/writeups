@@ -105,5 +105,6 @@ Looks like some crypting and decrypting is going on. Lets call the program with 
     aXEIBNuuDcMP_no[i] ^= aXEIBNuuDcMP_no[v1 - 1 - i] ^ 0x80;
   }
   ```
-  
+Looking at the registers after the function was executed, the flag was in RDI (it was deleted from RAX intentionally before the function was left ).
 
+Flag: h4ck1t{mor0ns_rel1es_on_p4ck3r5_vari0rs_d03sn0t}
