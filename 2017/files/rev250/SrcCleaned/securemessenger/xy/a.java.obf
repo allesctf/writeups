@@ -1,0 +1,84 @@
+package messenger.hackit2017.com.securemessenger.a;
+
+import java.io.ByteArrayOutputStream;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+public abstract class a
+{
+  public a() {}
+  
+  public static a a(int paramInt)
+  {
+    switch (paramInt)
+    {
+    default: 
+      throw new AssertionError("Unknown version: " + paramInt);
+    case 2: 
+      return new b();
+    }
+    return new c();
+  }
+  
+  private byte[] a(byte[] paramArrayOfByte1, byte[] paramArrayOfByte2)
+  {
+    try
+    {
+      Mac localMac = Mac.getInstance("HmacSHA256");
+      localMac.init(new SecretKeySpec(paramArrayOfByte1, "HmacSHA256"));
+      paramArrayOfByte1 = localMac.doFinal(paramArrayOfByte2);
+      return paramArrayOfByte1;
+    }
+    catch (Exception paramArrayOfByte1)
+    {
+      throw new AssertionError(paramArrayOfByte1);
+    }
+  }
+  
+  private byte[] b(byte[] paramArrayOfByte1, byte[] paramArrayOfByte2, int paramInt)
+  {
+    double d = paramInt / 32.0D;
+    try
+    {
+      int k = (int)Math.ceil(d);
+      byte[] arrayOfByte = new byte[0];
+      ByteArrayOutputStream localByteArrayOutputStream = new ByteArrayOutputStream();
+      int j = a();
+      int i = paramInt;
+      paramInt = j;
+      while (paramInt < a() + k)
+      {
+        Mac localMac = Mac.getInstance("HmacSHA256");
+        localMac.init(new SecretKeySpec(paramArrayOfByte1, "HmacSHA256"));
+        localMac.update(arrayOfByte);
+        if (paramArrayOfByte2 != null) {
+          localMac.update(paramArrayOfByte2);
+        }
+        localMac.update((byte)paramInt);
+        arrayOfByte = localMac.doFinal();
+        j = Math.min(i, arrayOfByte.length);
+        localByteArrayOutputStream.write(arrayOfByte, 0, j);
+        i -= j;
+        paramInt += 1;
+      }
+      paramArrayOfByte1 = localByteArrayOutputStream.toByteArray();
+      return paramArrayOfByte1;
+    }
+    catch (Exception paramArrayOfByte1)
+    {
+      throw new AssertionError(paramArrayOfByte1);
+    }
+  }
+  
+  protected abstract int a();
+  
+  public byte[] a(byte[] paramArrayOfByte1, byte[] paramArrayOfByte2, int paramInt)
+  {
+    return a(paramArrayOfByte1, new byte[32], paramArrayOfByte2, paramInt);
+  }
+  
+  public byte[] a(byte[] paramArrayOfByte1, byte[] paramArrayOfByte2, byte[] paramArrayOfByte3, int paramInt)
+  {
+    return b(a(paramArrayOfByte2, paramArrayOfByte1), paramArrayOfByte3, paramInt);
+  }
+}

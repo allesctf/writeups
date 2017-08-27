@@ -1,0 +1,12 @@
+package messenger.hackit2017.com.securemessenger.a;
+
+public class c
+  extends a
+{
+  public c() {}
+  
+  protected int a()
+  {
+    return 1;
+  }
+}
