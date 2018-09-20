@@ -11,31 +11,39 @@ Starting the 1337.exe with my favorite debugger x64dbg we notice a “Nope”-Me
 ![](return.png)
 
 `ReadConsoleA` sounds good, but its only an internal API call. We are interested in the call of the 1337.exe module, which is actually a `ReadFile` call with the console handle.
+
 ![](consoleread.png)
 
 Knowing this location, we can trace the `lpBuffer` variable. It gets copied to a string (`0x00524A71`) and is returned. Eventually we arrive at `0x005755E3` where 8 bytes of input is pushed to the stack and the function `0x00528100` is called.
+
 ![](call.png)
 
 We handle this function as a black box for now. There is a 8 byte userinput segment and 8 byte output is returned in the registers EAX and EDX. Actually it’s a 64 bit number that gets passed in two registers. Keep in mind the 32 Bit context ;) This function gets called multiple times, passing all the 8 byte separated userinput to this black box function. Tracing the output of this black box function (memory BPs) we finally arrive at 0x00577098, `call eax`.
+
 ![](calleax.png)
 
 The first argument of this function call (as seen in the stack) is an address `X`, the second argument is address `X+1`. The third argument is simply a `1`, and static! The first argument is actually a byte of the output of the black box function, the second argument is static and comes from a decrypted string buffer. Lets analyze the function that gets called (`0x005115C4`).
 
 The pseudocode of this function is 1900 lines, sweet! But we’re lucky, the third argument is always 1. And so the function reduces to a few lines:
+
 ![](memcmp1.png)
 ![](memcmp2.png)
 
 A few lines later, tracing the value of `EBX`:
+
 ![](ebxtrace.png)
  
 The string “WriteProcessMemory” (another red herring) is used to calculate a static byte value: `0x12C`. And this value is compared to `ECX`, which should match. If we toggle the `ZF` to negate the comparison, we jump to the “good flag” function: 
+
 ![](goodflag.png)
  
 Cool, task solved! Nah not really, we have to find the matching values for the static buffer. And for this, we have to analyze the black box functions which transforms the user input to an “hash” that is compared with the static buffer. 
 We’d like to use IDA pseudocode to analyze this input transformation function, but a clever obfuscation technique hinders IDA to do so:
  
  ![](obfuscation.png)
+ 
 First all registers are saved, then the “function” is called, basically pushing the return address to the stack and jumping to the next line. The return address is popped from the stack, increased and pushed back, now pointing to the instruction right before the popad. A ret jumps to this place. So those lines basically do nothing, but disturb the stack analysis of IDA. If we NOP all those instructions, we get nice pseudocode:
+
 ![](pseudocodehash.png)
 
 All this code reduces to:
@@ -60,6 +68,7 @@ In an even simpler form the calculation is reduced to: `pow(5,INPUT, 2^64)`. Let
 '0xb4f541a4c7960705L'
 ```
 ![](match.png)
+
 We got the right values stored in our registers! This means we have to solve a discrete logarithmic problem in the form a^x mod N = b with a=5, N = 2^64 and b given from the comparison buffer. Sage can solve this problem effectively and it worked well for our generated input. 
 ```python
 def reversealgo(inp):
@@ -81,7 +90,8 @@ Notice how all of them are even numbers, which can’t be calculated using `5^x`
 >>> hex(pow(5,0x7333333312345678,2**64))
 '0xab0057c4f85cb421L'`
 ```
-But the algorithm of the 1337.exe handles the first case as `0xab0057c4f85cb420`. Using this knowledge, we could simply add a `1` to the static input buffer, solve the discrete log problem and discard the MSB of the result, yielding the searched input. 
+But the algorithm of the 1337.exe handles the first case as `0xab0057c4f85cb420`. Using this knowledge, we could simply add a `1` to the static input buffer, solve the discrete log problem and discard the MSB of the result, yielding the searched input.
+
 ![](flag.png)
 
 There were various other obfuscation strategies used in this binary. Parts of functions were just NOPs for 200 instructions, other functions called the very same function multiple times in a normal control flow. And the static comparison buffer was depended on the user input length! That means if you just tested with a 9 character input you got a slightly different comparison buffer than with a 17-character input. The real comparison buffer was only decrypted when the user provided a 24-character input.
