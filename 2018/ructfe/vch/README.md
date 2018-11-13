@@ -1,4 +1,4 @@
-﻿# vch (Reversing)
+﻿# vch (C# ASP.NET Exploiting)
 
 ## Introduction
 This was the only challenge I worked on during the 9 hour CTF playtime. One hour before the finish I finally noticed the vulnerability and a very bad script to solve the challenge was written. It didn't give many points, but still: Solved!
@@ -179,5 +179,5 @@ Its quite a flow for only one flag, but the automation reached around 4 seconds 
 
 Im curious if there were other flaws in the application that I didn't notice...
 
-Anyway, fun challenge! And very, very, very messy script attached.
+Anyway, fun challenge! And very, very, very messy script attached: [here](solve.py)
 
