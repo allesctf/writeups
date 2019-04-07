@@ -49,3 +49,5 @@ The code to check password is at address `0x7e37`. Here's an annotated version:
 0000:7e5e                 8b07  mov ax, word [bx] ; load from 0x8026 + 2*(char - 0x61)
 0000:7e60                 ffe0  jmp ax            ; jump to that address
 ```
+
+Analysis of the 24 different handlers referenced at 0x8026 reveals that the correct password is `sojupwner`.
