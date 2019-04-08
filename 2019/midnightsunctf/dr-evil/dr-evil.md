@@ -25,4 +25,8 @@ for packet in pcap:
 print(binascii.unhexlify('%x0' % int(''.join(map(lambda b: '1' if b else '0', res)), 2)).decode())
 ```
 
-This prints the string `Ladies and gentlemen, welcome to my underground lair. I have gathered here before me the world's deadliest assassins. And yet, each of you has failed to kill Austin Powers and submit the flag "midnight{1_Milli0n_evil_b1tz!}". That makes me angry. And when Dr. Evil gets angry, Mr. Bigglesworth gets upset. And when Mr. Bigglesworth gets upset, people DIE!!`, which contains the flag `midnight{1_Milli0n_evil_b1tz!}`.
+This prints the string 
+```
+Ladies and gentlemen, welcome to my underground lair. I have gathered here before me the world's deadliest assassins. And yet, each of you has failed to kill Austin Powers and submit the flag "midnight{1_Milli0n_evil_b1tz!}". That makes me angry. And when Dr. Evil gets angry, Mr. Bigglesworth gets upset. And when Mr. Bigglesworth gets upset, people DIE!!
+```
+which contains the flag `midnight{1_Milli0n_evil_b1tz!}`.
