@@ -99,4 +99,5 @@ if __name__ == '__main__':
 ```
 
 ## Flag
-`TWCTF{}`
+`TWCTF{ky0-wa-dare-n0-donna-yume-ni?kurukuru-mewkledreamy!}`
+`TWCTF{you-have-to-eat-tomato-yume-chan!}`
